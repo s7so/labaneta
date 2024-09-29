@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:labaneta_sweet/utils/app_theme.dart';
-import 'package:labaneta_sweet/utils/constants.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -16,19 +14,20 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ElevatedButton(
       onPressed: onPressed,
       style: isOutlined
           ? ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              foregroundColor: AppTheme.accentColor,
-              side: BorderSide(color: AppTheme.accentColor),
+              foregroundColor: theme.colorScheme.secondary,
+              side: BorderSide(color: theme.colorScheme.secondary),
             )
           : null,
       child: Text(
         text,
-        style: AppTheme.textTheme.labelLarge?.copyWith(
-          color: isOutlined ? AppTheme.accentColor : Colors.white,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: isOutlined ? theme.colorScheme.secondary : Colors.white,
         ),
       ),
     );

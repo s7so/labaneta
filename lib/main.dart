@@ -1,35 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:labaneta_sweet/utils/app_theme.dart';
-import 'package:labaneta_sweet/screens/home_screen.dart';
-import 'package:labaneta_sweet/providers/product_provider.dart';
 import 'package:labaneta_sweet/providers/cart_provider.dart';
+import 'package:labaneta_sweet/providers/product_provider.dart';
+import 'package:labaneta_sweet/providers/theme_provider.dart';
+import 'package:labaneta_sweet/providers/loyalty_provider.dart';
+import 'package:labaneta_sweet/screens/home_screen.dart';
+import 'package:labaneta_sweet/utils/app_theme.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LoyaltyProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (ctx) => ProductProvider()),
-        ChangeNotifierProvider(create: (ctx) => CartProvider()),
-      ],
-      child: MaterialApp(
-        title: 'Labanita Sweets',
-        theme: ThemeData(
-          fontFamily: 'Raleway',
-          // Use other theme properties from AppTheme
-          primaryColor: AppTheme.primaryColor,
-          scaffoldBackgroundColor: AppTheme.backgroundColor,
-          appBarTheme: AppTheme.theme.appBarTheme,
-          elevatedButtonTheme: AppTheme.theme.elevatedButtonTheme,
-          textTheme: AppTheme.textTheme,
-        ),
-        home: HomeScreen(),
-      ),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Labanita Sweets',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const HomeScreen(),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:labaneta_sweet/utils/app_theme.dart';
 import 'package:labaneta_sweet/screens/home_screen.dart';
 import 'package:labaneta_sweet/screens/cart_screen.dart';
+import 'package:labaneta_sweet/screens/profile_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -15,13 +15,14 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (index) {
         onTap(index);
         _navigateToScreen(context, index);
       },
-      selectedItemColor: AppTheme.accentColor,
+      selectedItemColor: theme.colorScheme.secondary,
       unselectedItemColor: Colors.grey,
       items: const [
         BottomNavigationBarItem(
@@ -55,13 +56,9 @@ class BottomNavBar extends StatelessWidget {
         );
         break;
       case 2:
-        // Remove 'const' from the Scaffold constructor
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Scaffold(
-            appBar: AppBar(title: const Text('Profile')),
-            body: const Center(child: Text('Profile Screen Placeholder')),
-          )),
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
         );
         break;
     }

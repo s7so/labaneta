@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:labaneta_sweet/utils/app_theme.dart';
 import 'package:labaneta_sweet/utils/constants.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -14,10 +13,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return AppBar(
       title: Text(
         title,
-        style: AppTheme.textTheme.displayMedium?.copyWith(
+        style: theme.textTheme.headlineMedium?.copyWith(
           color: Colors.white,
         ),
       ),
