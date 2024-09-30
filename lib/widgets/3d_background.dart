@@ -60,7 +60,7 @@ class BackgroundPainter extends CustomPainter {
 
     // Draw background gradient
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    final gradient = const LinearGradient(
+    const gradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [

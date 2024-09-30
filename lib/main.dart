@@ -5,7 +5,7 @@ import 'package:labaneta_sweet/providers/product_provider.dart';
 import 'package:labaneta_sweet/providers/theme_provider.dart';
 import 'package:labaneta_sweet/providers/loyalty_provider.dart';
 import 'package:labaneta_sweet/screens/home_screen.dart';
-import 'package:labaneta_sweet/utils/app_theme.dart';
+import 'package:labaneta_sweet/theme/app_theme.dart';
 
 void main() {
   runApp(
@@ -22,7 +22,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +31,11 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Labanita Sweets',
           theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          // We'll remove the darkTheme for now since it's not defined
+          // darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.light, // Always use light theme for now
           home: const HomeScreen(),
+          debugShowCheckedModeBanner: false,
         );
       },
     );

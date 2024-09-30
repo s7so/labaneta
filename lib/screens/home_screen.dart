@@ -1,179 +1,342 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:labaneta_sweet/components/bottom_nav_bar.dart';
-import 'package:labaneta_sweet/utils/constants.dart';
-import 'package:labaneta_sweet/utils/app_theme.dart';
 import 'package:labaneta_sweet/providers/product_provider.dart';
 import 'package:labaneta_sweet/screens/menu_screen.dart';
 import 'package:labaneta_sweet/components/search_bar.dart' as custom_search_bar;
 import 'package:labaneta_sweet/components/special_offers_section.dart';
 import 'package:labaneta_sweet/components/best_selling_section.dart';
-import 'package:labaneta_sweet/components/promotional_banner.dart';
-import 'package:labaneta_sweet/components/circular_category_card.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:labaneta_sweet/theme/app_theme.dart';
+import 'dart:math' as math;
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  static const List<Map<String, dynamic>> _categories = [
-    {'name': 'Cakes', 'icon': Icons.cake},
-    {'name': 'Cupcakes', 'icon': Icons.local_dining},
-    {'name': 'Pastries', 'icon': Icons.bakery_dining},
-    {'name': 'Chocolates', 'icon': Icons.emoji_food_beverage},
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  int _selectedCategoryIndex = 0;
+
+  final List<Map<String, dynamic>> categories = [
+    {'name': 'Cakes', 'icon': Icons.cake, 'color': AppColors.primary},
+    {'name': 'Cupcakes', 'icon': Icons.local_dining, 'color': AppColors.secondary},
+    {'name': 'Pastries', 'icon': Icons.bakery_dining, 'color': AppColors.tertiary},
+    {'name': 'Chocolates', 'icon': Icons.emoji_food_beverage, 'color': AppColors.accent},
   ];
 
-  static const List<Map<String, String>> _promotions = [
-    {'text': 'عرض خاص: خصم 20% على جميع الكيك!', 'action': 'cakes'},
-    {'text': 'جديد: كب كيك بنكهة الفراولة والفانيليا', 'action': 'cupcakes'},
-    {'text': 'اطلب الآن واحصل على توصيل مجاني للطلبات فوق 50\$', 'action': 'delivery'},
-    {'text': 'تذوق طعم الإبداع مع حلوياتنا المميزة', 'action': 'specials'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 10),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: AppTheme.getGradientDecoration(Theme.of(context).brightness == Brightness.dark),
-        child: SafeArea(
-          child: SingleChildScrollView(
+      body: CustomScrollView(
+        slivers: [
+          _buildSliverAppBar(context),
+          SliverToBoxAdapter(
             child: Column(
               children: [
-                _buildAppBar(context),
-                const PromotionalBanner(promotions: _promotions),
-                Padding(
-                  padding: const EdgeInsets.all(Constants.paddingMedium),
-                  child: custom_search_bar.SearchBar(
-                    onChanged: (query) {
-                      // Handle search query
-                    },
-                  ),
-                ),
-                _buildCategories(),
-                Consumer<ProductProvider>(
-                  builder: (context, productProvider, child) {
-                    return BestSellingSection(
-                      bestSellingProducts: productProvider.bestSellingProducts.take(5).toList(),
-                    );
-                  },
-                ),
-                Consumer<ProductProvider>(
-                  builder: (context, productProvider, child) {
-                    return SpecialOffersSection(
-                      discountedProducts: productProvider.discountedProducts,
-                    );
-                  },
-                ),
+                _buildPromotionalBanner(context),
+                _buildSearchBar(),
+                _buildCategorySection(context),
+                _buildSpecialOffers(context),
+                _buildBestSelling(context),
                 _buildFullMenuSection(context),
               ],
             ),
           ),
-        ),
+        ],
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: 0,
         onTap: (index) {
-          // Handle navigation
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              _navigateToMenu(context);
+              break;
+            case 2:
+              // TODO: Implement navigation to Cart screen
+              break;
+            case 3:
+              // TODO: Implement navigation to Profile screen
+              break;
+          }
         },
       ),
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Text('Labanita Sweets', 
-        style: Theme.of(context).textTheme.headlineSmall),
-      centerTitle: true,
-      backgroundColor: Colors.transparent,
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 200.0,
+      floating: false,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text('Labanita Sweets',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              shadows: [Shadow(color: Colors.black.withOpacity(0.3), blurRadius: 2, offset: const Offset(1, 1))],
+            )),
+        background: Image.asset(
+          'assets/images/432438460_122093157200249042_6397283536549608588_n.jpg',
+          fit: BoxFit.cover,
+        ),
+      ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.menu_book),
-          onPressed: () => _navigateToMenuScreen(context),
+          icon: const Icon(Icons.notifications, color: Colors.white),
+          onPressed: () {
+            // Handle notifications
+          },
         ),
       ],
     );
   }
 
-  Widget _buildCategories() {
-    return SizedBox(
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _categories.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: CircularCategoryCard(
-              category: _categories[index]['name'],
-              icon: _categories[index]['icon'],
-              onTap: () {
-                // TODO: Navigate to category screen
-              },
+  Widget _buildPromotionalBanner(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      height: 180,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.primary, AppColors.secondary],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -50,
+            bottom: -50,
+            child: CircleAvatar(
+              radius: 100,
+              backgroundColor: Colors.white.withOpacity(0.2),
             ),
-          );
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Special Offer',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '20% off on all cakes this week!',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _navigateToMenu(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Shop Now'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0);
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: custom_search_bar.SearchBar(
+        onChanged: (query) {
+          // Handle search query
         },
       ),
     );
   }
 
-  Widget _buildFullMenuSection(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _buildCategorySection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            'Categories',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ).animate()
+            .fadeIn(duration: 600.ms)
+            .slideX(begin: -0.2, end: 0),
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+        SizedBox(
+          height: 150,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              return _buildCategoryCard(context, categories[index], index);
+            },
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryCard(BuildContext context, Map<String, dynamic> category, int index) {
+    final isSelected = _selectedCategoryIndex == index;
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedCategoryIndex = index;
+        });
+      },
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, child) {
+          final value = math.sin((_controller.value + index / categories.length) * 2 * math.pi);
+          return Transform.translate(
+            offset: Offset(0, 4 * value),
+            child: child,
+          );
+        },
+        child: Container(
+          width: 100,
+          margin: EdgeInsets.only(
+            left: index == 0 ? 16 : 8,
+            right: index == categories.length - 1 ? 16 : 8,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  color: isSelected ? category['color'] : AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isSelected ? category['color'].withOpacity(0.4) : Colors.grey.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  category['icon'],
+                  color: isSelected ? Colors.white : category['color'],
+                  size: 40,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                category['name'],
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? category['color'] : AppColors.text,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ).animate()
+        .fadeIn(duration: 600.ms, delay: Duration(milliseconds: 100 * index))
+        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+    );
+  }
+
+  Widget _buildSpecialOffers(BuildContext context) {
+    return Consumer<ProductProvider>(
+      builder: (context, productProvider, child) {
+        return SpecialOffersSection(
+          discountedProducts: productProvider.discountedProducts,
+        );
+      },
+    );
+  }
+
+  Widget _buildBestSelling(BuildContext context) {
+    return Consumer<ProductProvider>(
+      builder: (context, productProvider, child) {
+        return BestSellingSection(
+          bestSellingProducts: productProvider.bestSellingProducts.take(5).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildFullMenuSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Discover Our Full Menu',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Explore all our delicious sweets and treats',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.8),
-            ),
+            'Explore Our Full Menu',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 16),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.menu_book, color: Colors.white),
-            label: const Text('View Full Menu'),
-            onPressed: () => _navigateToMenuScreen(context),
+          ElevatedButton(
+            onPressed: () => _navigateToMenu(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
+              minimumSize: const Size(double.infinity, 50),
             ),
+            child: const Text('View All Products'),
           ),
         ],
       ),
     );
   }
 
-  void _navigateToMenuScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MenuScreen()),
+  void _navigateToMenu(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const MenuScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutCubic;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
     );
   }
 }

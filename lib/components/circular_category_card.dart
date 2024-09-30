@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CircularCategoryCard extends StatelessWidget {
-  final String category;
+  final String title;
   final IconData icon;
   final VoidCallback onTap;
 
   const CircularCategoryCard({
     Key? key,
-    required this.category,
+    required this.title,
     required this.icon,
     required this.onTap,
   }) : super(key: key);
@@ -35,7 +35,7 @@ class CircularCategoryCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            category,
+            title,
             style: theme.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
