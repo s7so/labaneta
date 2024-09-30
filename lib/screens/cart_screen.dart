@@ -5,6 +5,7 @@ import 'package:labaneta_sweet/components/custom_button.dart';
 import 'package:labaneta_sweet/providers/cart_provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:labaneta_sweet/screens/checkout_screen.dart';
+import 'package:labaneta_sweet/screens/menu_screen.dart'; // Add this import
 import '../providers/loyalty_provider.dart';
 import '../models/loyalty_program.dart';
 
@@ -39,7 +40,12 @@ class CartScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MenuScreen()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: theme.colorScheme.primary,
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),

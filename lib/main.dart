@@ -26,18 +26,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
-        return MaterialApp(
-          title: 'Labanita Sweets',
-          theme: AppTheme.lightTheme,
-          // We'll remove the darkTheme for now since it's not defined
-          // darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.light, // Always use light theme for now
-          home: const HomeScreen(),
-          debugShowCheckedModeBanner: false,
-        );
-      },
+    return MaterialApp(
+      title: 'Labanita Sweets',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system, // يمكنك تغييرها إلى .light أو .dark حسب الحاجة
+      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

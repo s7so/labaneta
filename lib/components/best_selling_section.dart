@@ -93,10 +93,10 @@ class BestSellingSection extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(Icons.star, color: Colors.amber, size: 18),
+                        const Icon(Icons.star, color: Colors.amber, size: 18),
                         const SizedBox(width: 4),
                         Text(
-                          '${(4 + index * 0.1).toStringAsFixed(1)}',
+                          (4 + index * 0.1).toStringAsFixed(1),
                           style: theme.textTheme.bodySmall,
                         ),
                         const SizedBox(width: 8),

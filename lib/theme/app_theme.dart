@@ -13,19 +13,77 @@ class AppColors {
 }
 
 class AppTheme {
+  static final TextTheme textTheme = TextTheme(
+    headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.text),
+    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: AppColors.text),
+    bodyLarge: TextStyle(fontSize: 16, color: AppColors.text),
+    bodyMedium: TextStyle(fontSize: 14, color: AppColors.textLight),
+  );
+
   static final ThemeData lightTheme = ThemeData(
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.background,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.secondary,
       tertiary: AppColors.tertiary,
+      surface: AppColors.surface,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: AppColors.text,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.primary,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
+      titleTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.accent,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+    textTheme: textTheme,
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: AppColors.divider),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    ),
+    cardTheme: CardTheme(
+      color: AppColors.surface,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    dividerTheme: const DividerThemeData(
+      color: AppColors.divider,
+      thickness: 1,
+    ),
+  );
+
+  // يمكنك إضافة نمط داكن هنا إذا كنت ترغب في دعم الوضع الداكن
+  static final ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+    primaryColor: AppColors.primary,
+    scaffoldBackgroundColor: AppColors.background,
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
       surface: AppColors.surface,
       background: AppColors.background,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: AppColors.text,
-      onBackground: AppColors.text,
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.primary,
@@ -42,13 +100,7 @@ class AppTheme {
         ),
       ),
     ),
-    textTheme: TextTheme(
-      headlineSmall: TextStyle(color: AppColors.text, fontWeight: FontWeight.bold),
-      titleLarge: TextStyle(color: AppColors.text, fontWeight: FontWeight.bold),
-      titleMedium: TextStyle(color: AppColors.text),
-      bodyLarge: TextStyle(color: AppColors.text),
-      bodyMedium: TextStyle(color: AppColors.textLight),
-    ),
+    textTheme: textTheme,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -59,7 +111,7 @@ class AppTheme {
         borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: AppColors.surface,
     ),
     cardTheme: CardTheme(
       color: AppColors.surface,
@@ -71,6 +123,4 @@ class AppTheme {
       thickness: 1,
     ),
   );
-
-  // يمكنك إضافة نمط داكن هنا إذا كنت ترغب في دعم الوضع الداكن
 }

@@ -6,6 +6,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:confetti/confetti.dart';
 import 'dart:math';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:labaneta_sweet/screens/cart_screen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final Product product;
@@ -406,8 +407,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              // TODO: Navigate to cart screen
+              Navigator.of(context).pop(); // Close the dialog
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
             },
             child: const Text('Go to Cart'),
           ),
