@@ -13,7 +13,7 @@ class AppColors {
 }
 
 class AppTheme {
-  static final TextTheme textTheme = TextTheme(
+  static const TextTheme textTheme = TextTheme(
     headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.text),
     headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: AppColors.text),
     bodyLarge: TextStyle(fontSize: 16, color: AppColors.text),
@@ -76,16 +76,15 @@ class AppTheme {
     brightness: Brightness.dark,
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.background,
-    colorScheme: ColorScheme.dark(
+    colorScheme: const ColorScheme.dark(
       primary: AppColors.primary,
       secondary: AppColors.secondary,
       surface: AppColors.surface,
-      background: AppColors.background,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: AppColors.text,
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.primary,
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
@@ -104,11 +103,11 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.divider),
+        borderSide: const BorderSide(color: AppColors.divider),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: AppColors.primary, width: 2),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
       ),
       filled: true,
       fillColor: AppColors.surface,
@@ -118,7 +117,7 @@ class AppTheme {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
-    dividerTheme: DividerThemeData(
+    dividerTheme: const DividerThemeData(
       color: AppColors.divider,
       thickness: 1,
     ),

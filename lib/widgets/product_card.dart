@@ -25,7 +25,7 @@ class ProductCard extends StatelessWidget {
               color: Colors.grey.withOpacity(0.2),
               spreadRadius: 1,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -33,7 +33,7 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               child: Image.asset(
                 product.imageUrl,
                 height: 120,
@@ -52,7 +52,7 @@ class ProductCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     '\$${product.price.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(

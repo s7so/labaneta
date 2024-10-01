@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:labaneta_sweet/components/bottom_nav_bar.dart';
 import 'package:labaneta_sweet/providers/product_provider.dart';
 import 'package:labaneta_sweet/screens/menu_screen.dart';
 import 'package:labaneta_sweet/components/search_bar.dart' as custom_search_bar;
 import 'package:labaneta_sweet/components/special_offers_section.dart';
-import 'package:labaneta_sweet/components/best_selling_section.dart';
 import 'package:labaneta_sweet/models/product.dart';
 import 'package:labaneta_sweet/screens/product_details_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -481,13 +479,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CartScreen()),
+          MaterialPageRoute(builder: (context) => const CartScreen()),
         );
         break;
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfileScreen()),
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
         );
         break;
     }
@@ -553,7 +551,7 @@ class BestSellingProductCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(Icons.star, color: Colors.amber, size: 18),
+                          const Icon(Icons.star, color: Colors.amber, size: 18),
                           const SizedBox(width: 4),
                           Text(
                             '${(4.5 + index * 0.1).toStringAsFixed(1)} (${1000 + index * 100})',
@@ -633,11 +631,11 @@ class BestSellingProductCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.add_shopping_cart, size: 16),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text('Add', style: TextStyle(fontSize: 12)),
         ],
       ),

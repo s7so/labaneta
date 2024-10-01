@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866058182933",
+    "project_id": "labaneta-sweet-418b8",
+    "storage_bucket": "labaneta-sweet-418b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866058182933:android:70c1eade32ac9bc734891c",
+        "android_client_info": {
+          "package_name": "com.labaneta.labaneta_sweet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0qHo5Qtwx6jH4VrNOzYwlXM7yb4XpvXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
