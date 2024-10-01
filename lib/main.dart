@@ -10,6 +10,7 @@ import 'package:labaneta_sweet/screens/home_screen.dart';
 import 'package:labaneta_sweet/theme/app_theme.dart';
 import 'package:labaneta_sweet/providers/auth_provider.dart';
 import 'package:labaneta_sweet/screens/auth_screen.dart';
+import 'package:labaneta_sweet/providers/favorites_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LoyaltyProvider()),
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
       child: const MyApp(),
     ),
@@ -51,7 +53,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/home': (context) => HomeScreen(),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }

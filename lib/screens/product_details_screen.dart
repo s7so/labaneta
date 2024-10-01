@@ -7,6 +7,7 @@ import 'package:confetti/confetti.dart';
 import 'dart:math';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:labaneta_sweet/screens/cart_screen.dart';
+import 'package:labaneta_sweet/providers/favorites_provider.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final Product product;
@@ -157,13 +158,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
         ),
       ),
       actions: [
-        IconButton(
-          icon: Icon(_isLiked ? Icons.favorite : Icons.favorite_border, color: Colors.red),
-          onPressed: () {
-            setState(() {
-              _isLiked = !_isLiked;
-              if (_isLiked) _confettiController.play();
-            });
+        Consumer<FavoritesProvider>(
+          builder: (context, favoritesProvider, _) {
+            final isFavorite = favoritesProvider.isFavorite(widget.product);
+            return IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : null,
+              ),
+              onPressed: () {
+                if (isFavorite) {
+                  favoritesProvider.removeFromFavorites(widget.product);
+                } else {
+                  favoritesProvider.addToFavorites(widget.product);
+                }
+              },
+            );
           },
         ).animate(onPlay: (controller) => controller.repeat())
           .shimmer(duration: 1200.ms, color: Colors.red.withOpacity(0.7))

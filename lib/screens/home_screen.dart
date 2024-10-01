@@ -11,6 +11,7 @@ import 'package:labaneta_sweet/theme/app_theme.dart';
 import 'dart:math' as math;
 import 'package:labaneta_sweet/screens/cart_screen.dart';
 import 'package:labaneta_sweet/screens/profile_screen.dart';
+import 'package:labaneta_sweet/screens/favorites_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -412,6 +413,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   _buildNavItem(Icons.menu_book, 'Menu', 1),
                   _buildNavItem(Icons.shopping_cart, 'Cart', 2),
                   _buildNavItem(Icons.person, 'Profile', 3),
+                  _buildNavItem(Icons.favorite, 'Favorites', 4),
                 ],
               ),
             ),
@@ -486,6 +488,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
+        break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FavoritesScreen()),
         );
         break;
     }
