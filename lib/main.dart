@@ -50,6 +50,9 @@ class MyApp extends StatelessWidget {
         },
       ),
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/home': (context) => HomeScreen(),
+      },
     );
   }
 }

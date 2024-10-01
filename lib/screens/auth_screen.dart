@@ -34,7 +34,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     _nameController = TextEditingController();
   }
 
-
   @override
   void dispose() {
     _tabController.dispose();
@@ -242,10 +241,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       setState(() => _isLoading = true);
       try {
         await Provider.of<AuthProvider>(context, listen: false).login(
-          _emailController.text,
+          _emailController.text.trim(),
           _passwordController.text,
         );
-        // Navigate to home screen
+        // تأكد من أن هذا المسار موجود في التطبيق
+        Navigator.of(context).pushReplacementNamed('/home');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
       } finally {
@@ -259,11 +259,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       setState(() => _isLoading = true);
       try {
         await Provider.of<AuthProvider>(context, listen: false).signUp(
-          _nameController.text,
-          _emailController.text,
+          _nameController.text.trim(),
+          _emailController.text.trim(),
           _passwordController.text,
         );
-        // Navigate to home screen
+        // تأكد من أن هذا المسار موجود في التطبيق
+        Navigator.of(context).pushReplacementNamed('/home');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
       } finally {

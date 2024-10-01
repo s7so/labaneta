@@ -30,9 +30,13 @@ class AuthProvider with ChangeNotifier {
         if (doc.exists) {
           _userData = doc.data() as Map<String, dynamic>;
           notifyListeners();
+        } else {
+          print("User document does not exist.");
+          // يمكنك إنشاء وثيقة المستخدم هنا إذا لم تكن موجودة
         }
       } catch (e) {
         print("Error fetching user data: $e");
+        // يمكنك إضافة منطق إضافي هنا للتعامل مع الأخطاء المختلفة
       }
     }
   }
