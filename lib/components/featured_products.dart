@@ -28,11 +28,7 @@ class FeaturedProducts extends StatelessWidget {
             itemBuilder: (context, index) {
               final product = products[index];
               return ProductCard(
-                name: product.name,
-                imageUrl: product.imageUrl,
-                price: product.price,
-                isNew: index == 0, // Example: Mark the first product as new
-                isBestSeller: product.salesCount > 100, // Example: Mark as best seller if sales > 100
+                product: product, // Pass the product parameter
                 onTap: () {
                   // TODO: Navigate to product details
                 },

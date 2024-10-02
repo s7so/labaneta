@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:labaneta_sweet/models/product.dart';
 
 class ProductProvider with ChangeNotifier {
+  // List to store all the products
   final List<Product> _products = [
     // Initialize with some dummy products or load from a data source
     Product(
@@ -82,24 +83,28 @@ class ProductProvider with ChangeNotifier {
     ),
   ];
 
+  // Getter to return a copy of the products list
   List<Product> get products => [..._products];
 
+  // Getter to return best selling products
   List<Product> get bestSellingProducts {
     // Implement logic to return best selling products
     return _products.where((product) => product.salesCount > 100).toList();
   }
 
+  // Getter to return discounted products
   List<Product> get discountedProducts {
     // Implement logic to return discounted products
     return _products.where((product) => product.discount != null).toList();
   }
 
-  // Add other methods as needed
+  // Method to add a new product
   void addProduct(Product product) {
     _products.add(product);
     notifyListeners();
   }
 
+  // Method to update an existing product
   void updateProduct(Product product) {
     final index = _products.indexWhere((p) => p.id == product.id);
     if (index != -1) {
@@ -108,11 +113,13 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  // Method to delete a product by its ID
   void deleteProduct(String id) {
     _products.removeWhere((product) => product.id == id);
     notifyListeners();
   }
 
+  // Method to get a product by its ID
   Product? getProductById(String id) {
     try {
       return _products.firstWhere((product) => product.id == id);
@@ -121,8 +128,10 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  // Getter to return a list of unique categories
   List<String> get categories => ['All', ..._products.map((p) => p.category).toSet()];
 
+  // Method to get products by category
   List<Product> getProductsByCategory(String category) {
     return category == 'All'
         ? List.from(products)

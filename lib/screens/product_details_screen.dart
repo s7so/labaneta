@@ -1,3 +1,4 @@
+// Importing necessary packages and files
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:labaneta_sweet/providers/cart_provider.dart';
@@ -8,7 +9,10 @@ import 'dart:math';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:labaneta_sweet/screens/cart_screen.dart';
 import 'package:labaneta_sweet/providers/favorites_provider.dart';
+import 'package:labaneta_sweet/screens/review_screen.dart';
+import 'package:labaneta_sweet/providers/review_provider.dart';
 
+// Main widget for the product details screen
 class ProductDetailsScreen extends StatefulWidget {
   final Product product;
 
@@ -18,7 +22,9 @@ class ProductDetailsScreen extends StatefulWidget {
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
 }
 
+// State class for ProductDetailsScreen
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> with TickerProviderStateMixin {
+  // Controllers and variables for various UI elements
   late PageController _pageController;
   late ConfettiController _confettiController;
   bool _isLiked = false;
@@ -30,6 +36,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
   @override
   void initState() {
     super.initState();
+    // Initializing controllers and animations
     _pageController = PageController(viewportFraction: 0.85);
     _confettiController = ConfettiController(duration: const Duration(seconds: 1));
     _scaleController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
@@ -37,11 +44,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
       CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack)
     );
     _scaleController.forward();
+    // Fetching reviews for the product
+    Provider.of<ReviewProvider>(context, listen: false).fetchReviews();
   }
-
 
   @override
   void dispose() {
+    // Disposing controllers to free up resources
     _pageController.dispose();
     _confettiController.dispose();
     _scaleController.dispose();
@@ -56,133 +65,118 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
     return Scaffold(
       body: Stack(
         children: [
-          CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(theme),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildProductTitle(theme),
-                      const SizedBox(height: 16),
-                      _buildPriceAndRating(theme),
-                      const SizedBox(height: 24),
-                      _buildDescription(theme),
-                      const SizedBox(height: 24),
-                      _buildQuantitySelector(theme),
-                      const SizedBox(height: 24),
-                      _buildNutritionInfo(theme),
-                      const SizedBox(height: 24),
-                      _buildReviewsSection(theme),
-                    ],
-                  ).animate().fadeIn(duration: 600.ms, delay: 300.ms).slideY(begin: 0.2, end: 0),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildAddToCartButton(cartProvider, theme),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confettiController,
-              blastDirection: pi / 2,
-              maxBlastForce: 5,
-              minBlastForce: 2,
-              emissionFrequency: 0.05,
-              numberOfParticles: 50,
-              gravity: 0.05,
-              shouldLoop: false,
-              colors: const [Colors.red, Colors.pink, Colors.orange, Colors.yellow, Colors.white],
-              strokeWidth: 1,
-              strokeColor: Colors.white,
-            ),
-          ),
+          _buildBackground(theme),
+          _buildProductImages(),
+          _buildProductDetails(theme),
+          _buildFloatingActionButton(cartProvider, theme),
+          _buildConfetti(),
         ],
       ),
     );
   }
 
-  Widget _buildSliverAppBar(ThemeData theme) {
-    return SliverAppBar(
-      expandedHeight: 300,
-      pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              itemCount: 3, // Assume we have 3 images for each product
-              onPageChanged: (int page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              itemBuilder: (context, index) {
-                return Hero(
-                  tag: 'product_image_${widget.product.id}_$index',
-                  child: Image.asset(
-                    widget.product.imageUrl, // This should be an array of images
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-            ),
-            Positioned(
-              bottom: 10,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentPage == index ? theme.colorScheme.secondary : Colors.white.withOpacity(0.5),
-                    ),
-                  );
-                }),
-              ),
-            ),
+  // Widget to build the background gradient
+  Widget _buildBackground(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            theme.colorScheme.secondary.withOpacity(0.4),
+            theme.colorScheme.primary.withOpacity(0.4),
           ],
         ),
       ),
-      actions: [
-        Consumer<FavoritesProvider>(
-          builder: (context, favoritesProvider, _) {
-            final isFavorite = favoritesProvider.isFavorite(widget.product);
-            return IconButton(
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : null,
-              ),
-              onPressed: () {
-                if (isFavorite) {
-                  favoritesProvider.removeFromFavorites(widget.product);
-                } else {
-                  favoritesProvider.addToFavorites(widget.product);
-                }
-              },
-            );
-          },
-        ).animate(onPlay: (controller) => controller.repeat())
-          .shimmer(duration: 1200.ms, color: Colors.red.withOpacity(0.7))
-          .shake(hz: 4, curve: Curves.easeInOutCubic)
-          .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2)),
-      ],
     );
   }
 
+  // Widget to build the product image carousel
+  Widget _buildProductImages() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: 1, // Change this to 1 since we have only one image
+        onPageChanged: (int page) {
+          setState(() {
+            _currentPage = page;
+          });
+        },
+        itemBuilder: (context, index) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Hero(
+                tag: 'product_image_${widget.product.id}',
+                child: Image.asset(
+                  widget.product.imageUrl, // Use imageUrl instead of imageUrls[index]
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Widget to build the product details section
+  Widget _buildProductDetails(ThemeData theme) {
+    return Positioned(
+      top: MediaQuery.of(context).size.height * 0.5 - 30,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildProductTitle(theme),
+              const SizedBox(height: 16),
+              _buildPriceAndRating(theme),
+              const SizedBox(height: 24),
+              _buildDescription(theme),
+              const SizedBox(height: 24),
+              _buildQuantitySelector(theme),
+              const SizedBox(height: 24),
+              _buildWhyYoullLoveIt(theme),
+              const SizedBox(height: 24),
+              _buildReviewsSection(theme),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  // Widget to build the product title with animation
   Widget _buildProductTitle(ThemeData theme) {
     return ScaleTransition(
       scale: _scaleAnimation,
@@ -193,6 +187,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
     );
   }
 
+  // Widget to build the price and rating section
   Widget _buildPriceAndRating(ThemeData theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,6 +215,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
     );
   }
 
+  // Widget to build the product description
   Widget _buildDescription(ThemeData theme) {
     return Text(
       widget.product.description,
@@ -227,6 +223,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
     );
   }
 
+  // Widget to build the quantity selector
   Widget _buildQuantitySelector(ThemeData theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -252,6 +249,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
     );
   }
 
+  // Widget to build the quantity adjustment buttons with animations
   Widget _buildQuantityButton(IconData icon, VoidCallback onPressed) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -268,51 +266,118 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
       .shake(hz: 4, curve: Curves.easeInOutCubic);
   }
 
-  Widget _buildNutritionInfo(ThemeData theme) {
+  // Widget to build the nutrition information section
+  Widget _buildWhyYoullLoveIt(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Nutrition Information', style: theme.textTheme.titleLarge),
+        Text('Why You\'ll Love It', style: theme.textTheme.titleLarge),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNutritionItem('Calories', '250', Icons.local_fire_department),
-            _buildNutritionItem('Fat', '12g', Icons.opacity),
-            _buildNutritionItem('Carbs', '30g', Icons.grain),
-            _buildNutritionItem('Protein', '5g', Icons.fitness_center),
-          ],
+        _buildFeatureItem(
+          'Handcrafted with Love',
+          'Each treat is carefully handmade with the finest ingredients and attention to detail.',
+          Icons.favorite,
+        ),
+        _buildFeatureItem(
+          'Indulgent Flavors',
+          'Experience a burst of heavenly flavors that will tantalize your taste buds.',
+          Icons.restaurant,
+        ),
+        _buildFeatureItem(
+          'Perfect for Sharing',
+          'Spread joy by sharing these delightful treats with your loved ones.',
+          Icons.people,
+        ),
+        _buildFeatureItem(
+          'Elegant Packaging',
+          'Beautifully packaged, making it a perfect gift for any occasion.',
+          Icons.card_giftcard,
         ),
       ],
     );
   }
 
-  Widget _buildNutritionItem(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: Theme.of(context).colorScheme.secondary),
-        const SizedBox(height: 8),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .scale(delay: 300.ms);
+  Widget _buildFeatureItem(String title, String description, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: Theme.of(context).colorScheme.secondary,
+            size: 24,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).slideX(begin: 0.2, end: 0);
   }
 
+  // Widget to build the reviews section
   Widget _buildReviewsSection(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Customer Reviews', style: theme.textTheme.titleLarge),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Customer Reviews', style: theme.textTheme.titleLarge),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReviewScreen(product: widget.product)),
+                );
+              },
+              child: const Text('See All'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            RatingBarIndicator(
+              rating: Provider.of<ReviewProvider>(context).getAverageRatingForProduct(widget.product.id),
+              itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+              itemCount: 5,
+              itemSize: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '${Provider.of<ReviewProvider>(context).getReviewsForProduct(widget.product.id).length} reviews',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
-        _buildReviewItem('John Doe', 5, 'Absolutely delicious! Will order again.'),
-        _buildReviewItem('Jane Smith', 4, 'Great taste, but a bit pricey.'),
-        _buildReviewItem('Mike Johnson', 5, 'Best dessert I\'ve had in a while!'),
+        // Show a few review items
+        ...Provider.of<ReviewProvider>(context)
+            .getReviewsForProduct(widget.product.id)
+            .take(3)
+            .map((review) => _buildReviewItem(review.userName, review.rating.toInt(), review.comment))
+            .toList(),
       ],
     );
   }
 
+  // Widget to build individual review items with animations
   Widget _buildReviewItem(String name, int rating, String comment) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -356,50 +421,52 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> with Ticker
       .slideX(begin: 0.2, end: 0);
   }
 
-  Widget _buildAddToCartButton(CartProvider cartProvider, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, -3),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: theme.colorScheme.secondary,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        ),
+  // Widget to build the floating action button for adding to cart
+  Widget _buildFloatingActionButton(CartProvider cartProvider, ThemeData theme) {
+    return Positioned(
+      bottom: 20,
+      right: 20,
+      child: FloatingActionButton.extended(
         onPressed: () {
           for (int i = 0; i < _quantity; i++) {
             cartProvider.addItem(widget.product);
           }
           _showAddedToCartAnimation();
         },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.shopping_cart),
-            const SizedBox(width: 8),
-            Text(
-              'Add to Cart - \$${(widget.product.price * _quantity).toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 1, end: 0);
+        backgroundColor: theme.colorScheme.secondary,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.shopping_cart),
+        label: const Text('Add to Cart'),
+      ).animate()
+        .fadeIn(duration: 600.ms)
+        .slideY(begin: 1, end: 0)
+        .then() // Delay the next animation
+        .shimmer(duration: 1200.ms, color: Colors.white.withOpacity(0.5))
+        .shake(hz: 4, curve: Curves.easeInOutCubic),
+    );
   }
 
+  // Widget to build the confetti effect
+  Widget _buildConfetti() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConfettiWidget(
+        confettiController: _confettiController,
+        blastDirection: pi / 2,
+        maxBlastForce: 5,
+        minBlastForce: 2,
+        emissionFrequency: 0.05,
+        numberOfParticles: 50,
+        gravity: 0.05,
+        shouldLoop: false,
+        colors: const [Colors.red, Colors.pink, Colors.orange, Colors.yellow, Colors.white],
+        strokeWidth: 1,
+        strokeColor: Colors.white,
+      ),
+    );
+  }
+
+  // Method to show the "Added to Cart" animation and dialog
   void _showAddedToCartAnimation() {
     _confettiController.play();
     showDialog(

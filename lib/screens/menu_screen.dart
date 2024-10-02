@@ -5,6 +5,7 @@ import 'package:labaneta_sweet/models/product.dart';
 import 'package:labaneta_sweet/screens/product_details_screen.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:labaneta_sweet/components/product_card.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -14,10 +15,10 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
-  String _selectedCategory = 'All';
-  String _sortBy = 'name';
-  late ScrollController _scrollController;
-  bool _showFloatingButton = false;
+  String _selectedCategory = 'All'; // تخزين الفئة المحددة حاليًا
+  String _sortBy = 'name'; // تخزين طريقة الفرز الحالية
+  late ScrollController _scrollController; // وحدة التحكم في التمرير
+  bool _showFloatingButton = false; // تحديد ما إذا كان سيتم عرض الزر العائم أم لا
 
   @override
   void initState() {
@@ -25,14 +26,14 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
-          _showFloatingButton = _scrollController.offset > 200;
+          _showFloatingButton = _scrollController.offset > 200; // إظهار الزر العائم عندما يتجاوز التمرير 200 بكسل
         });
       });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController.dispose(); // التخلص من وحدة التحكم في التمرير عند تدمير الشاشة
     super.dispose();
   }
 
@@ -40,32 +41,33 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Consumer<ProductProvider>(
       builder: (context, productProvider, child) {
-        final categories = ['All', ...productProvider.categories];
-        final products = _getFilteredAndSortedProducts(productProvider);
+        final categories = ['All', ...productProvider.categories]; // الحصول على قائمة الفئات
+        final products = _getFilteredAndSortedProducts(productProvider); // الحصول على المنتجات المفلترة والمرتبة
 
         return Scaffold(
           body: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              _buildSliverAppBar(context),
+              _buildSliverAppBar(context), // بناء شريط التطبيق
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    _buildCategoryFilter(categories),
-                    _buildSortButton(),
+                    _buildCategoryFilter(categories), // بناء مرشح الفئات
+                    _buildSortButton(), // بناء زر الفرز
                   ],
                 ),
               ),
-              _buildProductGrid(products),
+              _buildProductGrid(products), // بناء شبكة المنتجات
             ],
           ),
-          floatingActionButton: _buildFloatingActionButton(),
+          floatingActionButton: _buildFloatingActionButton(), // بناء الزر العائم
         );
       },
     );
   }
 
   Widget _buildSliverAppBar(BuildContext context) {
+    // بناء شريط التطبيق باستخدام SliverAppBar
     return SliverAppBar(
       expandedHeight: 200.0,
       floating: false,
@@ -103,6 +105,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildCategoryFilter(List<String> categories) {
+    // بناء مرشح الفئات
     return Container(
       height: 60,
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -126,6 +129,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildCategoryChip(String category) {
+    // بناء رقاقة الفئة
     final isSelected = _selectedCategory == category;
     final theme = Theme.of(context);
 
@@ -150,6 +154,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildSortButton() {
+    // بناء زر الفرز
     return ElevatedButton.icon(
       icon: const Icon(Icons.sort),
       label: Text('Sort: ${_sortBy.capitalize()}'),
@@ -164,6 +169,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   void _showSortOptions() {
+    // عرض خيارات الفرز في BottomSheet
     showModalBottomSheet(
       context: context,
       builder: (context) => Column(
@@ -227,6 +233,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildFloatingActionButton() {
+    // بناء الزر العائم للانتقال إلى أعلى الصفحة
     return AnimatedOpacity(
       opacity: _showFloatingButton ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 200),
@@ -246,6 +253,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   List<Product> _getFilteredAndSortedProducts(ProductProvider productProvider) {
+    // الحصول على المنتجات المفلترة والمرتبة
     List<Product> products = _selectedCategory == 'All'
         ? List.from(productProvider.products)
         : productProvider.getProductsByCategory(_selectedCategory);
@@ -265,6 +273,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   void _navigateToProductDetails(Product product) {
+    // الانتقال إلى شاشة تفاصيل المنتج
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -282,113 +291,9 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 }
 
-class ProductCard extends StatelessWidget {
-  final Product product;
-  final VoidCallback onTap;
-
-  const ProductCard({
-    Key? key,
-    required this.product,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Hero(
-                tag: 'product_image_${product.id}',
-                child: Image.asset(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.7),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 12,
-                left: 12,
-                right: 12,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '\$${product.price.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (product.discount != null)
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${product.discount!.toStringAsFixed(0)}% OFF',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 extension StringExtension on String {
   String capitalize() {
+    // تحويل الحرف الأول من السلسلة إلى حرف كبير
     return "${this[0].toUpperCase()}${substring(1)}";
   }
 }

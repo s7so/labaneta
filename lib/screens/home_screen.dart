@@ -12,6 +12,7 @@ import 'dart:math' as math;
 import 'package:labaneta_sweet/screens/cart_screen.dart';
 import 'package:labaneta_sweet/screens/profile_screen.dart';
 import 'package:labaneta_sweet/screens/favorites_screen.dart';
+import 'package:labaneta_sweet/screens/notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -103,9 +104,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         IconButton(
           icon: const Icon(Icons.notifications, color: Colors.white),
           onPressed: () {
-            // Handle notifications
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationScreen()),
+            );
           },
-        ),
+        ).animate(onPlay: (controller) => controller.repeat())
+          .shimmer(duration: 1200.ms, color: Colors.white.withOpacity(0.5))
+          .shake(hz: 4, curve: Curves.easeInOutCubic),
       ],
     );
   }

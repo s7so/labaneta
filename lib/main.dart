@@ -11,6 +11,8 @@ import 'package:labaneta_sweet/theme/app_theme.dart';
 import 'package:labaneta_sweet/providers/auth_provider.dart';
 import 'package:labaneta_sweet/screens/auth_screen.dart';
 import 'package:labaneta_sweet/providers/favorites_provider.dart';
+import 'package:labaneta_sweet/providers/notification_provider.dart';
+import 'package:labaneta_sweet/providers/review_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LoyaltyProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
       ],
       child: const MyApp(),
     ),
